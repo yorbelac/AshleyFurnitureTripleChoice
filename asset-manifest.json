@@ -1,0 +1,14 @@
+{
+  "files": {
+    "main.css": "/AshleyFurnitureTripleChoice/static/css/main.437934a2.css",
+    "main.js": "/AshleyFurnitureTripleChoice/static/js/main.2d94b309.js",
+    "static/media/image.png": "/AshleyFurnitureTripleChoice/static/media/image.6bf66accde9e7e397067.png",
+    "index.html": "/AshleyFurnitureTripleChoice/index.html",
+    "main.437934a2.css.map": "/AshleyFurnitureTripleChoice/static/css/main.437934a2.css.map",
+    "main.2d94b309.js.map": "/AshleyFurnitureTripleChoice/static/js/main.2d94b309.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.437934a2.css",
+    "static/js/main.2d94b309.js"
+  ]
+}
