@@ -1,13 +1,13 @@
 {
   "files": {
     "main.css": "/AshleyFurnitureTripleChoice/static/css/main.3861997f.css",
-    "main.js": "/AshleyFurnitureTripleChoice/static/js/main.f7f66703.js",
+    "main.js": "/AshleyFurnitureTripleChoice/static/js/main.34d25c90.js",
     "index.html": "/AshleyFurnitureTripleChoice/index.html",
     "main.3861997f.css.map": "/AshleyFurnitureTripleChoice/static/css/main.3861997f.css.map",
-    "main.f7f66703.js.map": "/AshleyFurnitureTripleChoice/static/js/main.f7f66703.js.map"
+    "main.34d25c90.js.map": "/AshleyFurnitureTripleChoice/static/js/main.34d25c90.js.map"
   },
   "entrypoints": [
     "static/css/main.3861997f.css",
-    "static/js/main.f7f66703.js"
+    "static/js/main.34d25c90.js"
   ]
 }
