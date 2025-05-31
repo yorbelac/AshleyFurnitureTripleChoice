@@ -15,9 +15,7 @@
 }
 
 .logo {
-  height: 50px;
-  width: auto;
-  object-fit: contain;
+  height: 40px;
 }
 
 .names {
@@ -80,23 +78,6 @@
 .monthly-payment td {
   font-size: 1.2em;
   color: #1976d2;
-}
-
-.completion-services {
-  background-color: #f8f9fa;
-  font-weight: 500;
-}
-
-.completion-services td {
-  padding: 1rem 0.75rem;
-  border-top: 2px solid #e9ecef;
-  border-bottom: 2px solid #e9ecef;
-}
-
-.completion-services td:first-child {
-  font-size: 0.95em;
-  line-height: 1.4;
-  color: #495057;
 }
 
 .calculator-footer {

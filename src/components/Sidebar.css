@@ -160,24 +160,6 @@
   margin-bottom: 0;
 }
 
-.override-field {
-  margin-top: 0.75rem;
-  padding-top: 0.75rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.override-field label {
-  display: block;
-  font-size: 0.85rem;
-  color: #bdc3c7;
-  margin-bottom: 0.5rem;
-}
-
-.override-field input {
-  width: 100%;
-  margin-bottom: 0;
-}
-
 .sidebar-content h2 {
   margin-bottom: 20px;
   white-space: nowrap;
@@ -233,30 +215,4 @@
 
 .section-content {
   margin-top: 1rem;
-}
-
-.form-separator {
-  margin: 1rem -1rem;
-  padding: 0 1rem;
-  position: relative;
-  text-align: center;
-}
-
-.form-separator hr {
-  border: none;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-  margin: 0;
-}
-
-.form-separator span {
-  background: #2c3e50;
-  color: #bdc3c7;
-  font-size: 0.8rem;
-  padding: 0 0.8rem;
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
 } 
