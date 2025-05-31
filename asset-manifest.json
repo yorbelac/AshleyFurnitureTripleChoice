@@ -1,10 +1,10 @@
 {
   "files": {
-    "main.css": "/static/css/main.3861997f.css",
-    "main.js": "/static/js/main.f7f66703.js",
-    "index.html": "/index.html",
-    "main.3861997f.css.map": "/static/css/main.3861997f.css.map",
-    "main.f7f66703.js.map": "/static/js/main.f7f66703.js.map"
+    "main.css": "/AshleyFurnitureTripleChoice/static/css/main.3861997f.css",
+    "main.js": "/AshleyFurnitureTripleChoice/static/js/main.f7f66703.js",
+    "index.html": "/AshleyFurnitureTripleChoice/index.html",
+    "main.3861997f.css.map": "/AshleyFurnitureTripleChoice/static/css/main.3861997f.css.map",
+    "main.f7f66703.js.map": "/AshleyFurnitureTripleChoice/static/js/main.f7f66703.js.map"
   },
   "entrypoints": [
     "static/css/main.3861997f.css",
