@@ -186,4 +186,11 @@
   margin-bottom: 12px;
   color: #444;
   letter-spacing: 0.01em;
+}
+
+.terms-bottom-row td {
+  font-size: 1em;
+  background-color: #e6f9ec !important;
+  font-weight: bold;
+  color: #137333 !important;
 } 

@@ -9,6 +9,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import { useReactToPrint } from 'react-to-print';
 import { Modal, Button, ButtonGroup, ToggleButton } from 'react-bootstrap';
+import './LineItemManager.css';
 
 const DELIVERY_OPTIONS = [
   { value: 'White Glove', label: 'White Glove' },
@@ -644,6 +645,7 @@ const LineItemManager = ({ onCalculate, onAddLine, lines, delivery, setDelivery,
                   <table className="table table-sm table-bordered mb-0 text-center align-middle">
                     <thead>
                       <tr>
+                        <th className="bg-light text-center align-middle" style={{minWidth: '120px', fontWeight: 600}}></th>
                         {selectedTerms.map(term => (
                           <th key={term} className="text-center align-middle bg-light">{term} mo</th>
                         ))}
@@ -651,21 +653,25 @@ const LineItemManager = ({ onCalculate, onAddLine, lines, delivery, setDelivery,
                     </thead>
                     <tbody>
                       <tr>
+                        <td className="text-start fw-semibold" style={{background: '#f8f9fa'}}>Discount %</td>
                         {selectedTerms.map(term => (
                           <td key={term} className="text-center align-middle">{getDiscountPercent(term)}</td>
                         ))}
                       </tr>
                       <tr>
+                        <td className="text-start fw-semibold" style={{background: '#f8f9fa'}}>Discount $</td>
                         {selectedTerms.map(term => (
                           <td key={term} className="text-center align-middle">{getDiscountDollar(term)}</td>
                         ))}
                       </tr>
                       <tr>
+                        <td className="text-start fw-semibold" style={{background: '#f8f9fa'}}>Total</td>
                         {selectedTerms.map(term => (
                           <td key={term} className="text-center align-middle fw-semibold text-primary">${getFinancedForTerm(term).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
                         ))}
                       </tr>
-                      <tr>
+                      <tr className="terms-bottom-row">
+                        <td className="text-start fw-semibold" style={{background: '#e6f9ec'}}>Payment</td>
                         {selectedTerms.map(term => (
                           <td key={term} className="fw-bold text-center align-middle">${getMonthlyWithDiscount(term).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
                         ))}
