@@ -54,6 +54,14 @@ const LineItemManager = ({ onCalculate, onAddLine, lines, delivery, setDelivery,
     { value: 'doorstep', label: 'Doorstep Delivery' },
     { value: 'clearance', label: 'Clearance Delivery' },
   ];
+  const [discountPercents, setDiscountPercents] = useState({
+    6: 18,
+    12: 15,
+    24: 10,
+    36: 5,
+    60: 0,
+  });
+  const [customEditing, setCustomEditing] = useState({});
 
   React.useEffect(() => {
     setLineItems(lines.map(item => ({ ...item, protection: item.protection ?? true })));
@@ -233,22 +241,57 @@ const LineItemManager = ({ onCalculate, onAddLine, lines, delivery, setDelivery,
   const hasCashDiscount = cashDiscount && parseFloat(cashDiscount) > 0;
   const cashDiscountValue = hasCashDiscount ? parseFloat(cashDiscount) : null;
   // Discount percent row
+  const discountOptions = term => term === 6 ? [0, 5, 10, 15, 18, 20, 25, 30] : [0, 5, 10, 15, 20, 25, 30];
   const getDiscountPercent = (term) => {
-    if (term === 6 && hasCashDiscount) return <span title="Special Promo"><i className="bi bi-star-fill text-warning" style={{fontSize: '1rem', verticalAlign: 'middle'}}></i></span>;
-    if (DISCOUNT_MAP[term] > 0) return `${(DISCOUNT_MAP[term] * 100).toFixed(0)}%`;
-    return '-';
+    if (customEditing[term]) {
+      return (
+        <input
+          type="number"
+          min={0}
+          max={100}
+          step={0.1}
+          value={discountPercents[term]}
+          onChange={e => {
+            const val = parseFloat(e.target.value) || 0;
+            setDiscountPercents(prev => ({ ...prev, [term]: val }));
+          }}
+          onBlur={() => setCustomEditing(prev => ({ ...prev, [term]: false }))}
+          style={{ width: 60, fontSize: '1em', textAlign: 'center' }}
+          autoFocus
+        />
+      );
+    }
+    return (
+      <select
+        value={discountPercents[term] > 30 || (term === 6 && discountPercents[term] !== 0 && ![5,10,15,18,20,25,30].includes(discountPercents[term])) ? 'custom' : discountPercents[term]}
+        onChange={e => {
+          if (e.target.value === 'custom') {
+            setCustomEditing(prev => ({ ...prev, [term]: true }));
+          } else {
+            setDiscountPercents(prev => ({ ...prev, [term]: parseFloat(e.target.value) }));
+          }
+        }}
+        style={{ fontSize: '1em', textAlign: 'center', minWidth: 60 }}
+      >
+        {discountOptions(term).map(opt => (
+          <option key={opt} value={opt}>{opt}%</option>
+        ))}
+        <option value="custom">Custom</option>
+      </select>
+    );
   };
   // Discount dollar row
   const getDiscountDollar = (term) => {
+    const percent = discountPercents[term] || 0;
     if (term === 6 && hasCashDiscount) return `$${cashDiscountValue.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
-    if (DISCOUNT_MAP[term] > 0) return `$${(furnitureTotal * DISCOUNT_MAP[term]).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+    if (percent > 0) return `$${(furnitureTotal * percent / 100).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
     return '-';
   };
   // Add a function to get the financed total for each term (after discounts and 2% for 36/60mo)
   const getFinancedForTerm = (term) => {
     let discount = 0;
     if (term === 6 && hasCashDiscount) discount = cashDiscountValue;
-    else if (DISCOUNT_MAP[term] > 0) discount = furnitureTotal * DISCOUNT_MAP[term];
+    else if (discountPercents[term] > 0) discount = furnitureTotal * (discountPercents[term] / 100);
     discount = Math.min(discount, furnitureTotal);
     let financed = Math.max(summaryFinanced - discount, 0);
     if (term === 36 || term === 60) {
@@ -260,11 +303,9 @@ const LineItemManager = ({ onCalculate, onAddLine, lines, delivery, setDelivery,
   const getMonthlyWithDiscount = (term) => {
     let discount = 0;
     if (term === 6 && hasCashDiscount) discount = cashDiscountValue;
-    else if (DISCOUNT_MAP[term] > 0) discount = furnitureTotal * DISCOUNT_MAP[term];
-    // Don't let discount exceed furniture total
+    else if (discountPercents[term] > 0) discount = furnitureTotal * (discountPercents[term] / 100);
     discount = Math.min(discount, furnitureTotal);
     let financed = Math.max(summaryFinanced - discount, 0);
-    // For 36mo and 60mo, add 2% to financed total after discounts
     if (term === 36 || term === 60) {
       financed = financed * 1.02;
     }
@@ -308,36 +349,8 @@ const LineItemManager = ({ onCalculate, onAddLine, lines, delivery, setDelivery,
   const openHelperModal = () => setShowHelperModal(true);
   const closeHelperModal = () => setShowHelperModal(false);
 
-  // Print-specific styles to center the printed content
-  const printStyles = `
-  @media print {
-    .print-summary-center {
-      margin: auto !important;
-      float: none !important;
-      display: flex !important;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      box-shadow: none !important;
-      background: white !important;
-      position: fixed !important;
-      left: 0; right: 0; top: 0; bottom: 0;
-      width: 100vw !important;
-      height: 100vh !important;
-      max-width: 600px !important;
-      max-height: 100vh !important;
-    }
-    body * {
-      visibility: hidden;
-    }
-    .print-summary-center, .print-summary-center * {
-      visibility: visible !important;
-    }
-  }
-  `;
-
   return (
-    <div className="p-3" style={{ width: '100vw', height: '100vh', padding: 0, margin: 0, background: '#f7f8fa' }}>
+    <div className="p-4" style={{ width: '100vw', height: '100vh', padding: 0, margin: 0, background: '#fff', fontSize: '1.1rem' }} ref={printRef}>
       <div style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column' }}>
         <div className="d-flex justify-content-between align-items-center mb-3" style={{width: '100%'}}>
           <div className="d-flex align-items-center gap-2">
@@ -471,7 +484,7 @@ const LineItemManager = ({ onCalculate, onAddLine, lines, delivery, setDelivery,
           )}
         </div>
         <div className="row" style={{ display: 'flex' }}>
-          <div className="border-end" style={{ flex: '0 0 40%', maxWidth: '40%' }}>
+          <div className="border-end" style={{ flex: '0 0 30%', maxWidth: '30%' }}>
             <div className="mb-3 p-3" style={{ background: 'whitesmoke', borderRadius: '10px' }}>
               <form className="d-flex align-items-end gap-2 mb-2" onSubmit={e => { e.preventDefault(); handleAddLine(); }}>
                 <div className="flex-grow-1">
@@ -508,7 +521,7 @@ const LineItemManager = ({ onCalculate, onAddLine, lines, delivery, setDelivery,
                 </div>
               </form>
             </div>
-            <div className="line-items-section mb-2 p-2">
+            <div className="line-items-section section-card mb-2 p-2">
               {lineItems.map((line, index) => (
                 <React.Fragment key={index}>
                   <div className="d-flex align-items-center justify-content-between py-2">
@@ -567,76 +580,75 @@ const LineItemManager = ({ onCalculate, onAddLine, lines, delivery, setDelivery,
                 </React.Fragment>
               ))}
             </div>
-          </div>
-          <style>{printStyles}</style>
-          <div className="d-flex flex-column align-items-center print-summary-center" style={{ minHeight: 500, flex: '0 0 60%', maxWidth: '60%' }} ref={printRef}>
-            <div className="w-100" style={{overflowY: 'auto', maxHeight: 520}}>
-              <div className="summary-section bg-light shadow-sm mb-3 px-3 pt-2 pb-1">
-                <div className="mb-3">
-                  <div className="d-flex justify-content-between align-items-center my-2">
-                    <span className="fw-semibold">Total Retail Price</span>
-                    <span className="fw-bold">${totalPrice.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
-                  </div>
-                  <div className="d-flex justify-content-between align-items-center mb-2">
-                    <span className="fw-semibold" style={{cursor: 'pointer'}} onClick={() => setCollapseFees(v => !v)}>
-                      Fulfillment
-                      <span style={{marginLeft: 8, fontWeight: 'bold', fontSize: '1.1em'}}>
-                        {collapseFees ? '-' : '+'}
-                      </span>
+            <div className="summary-section section-card bg-light shadow-sm mb-3 px-3 pt-2 pb-1">
+              <div className="mb-3">
+                <div className="d-flex justify-content-between align-items-center my-2">
+                  <span className="fw-semibold">Total Retail Price</span>
+                  <span className="fw-bold">${totalPrice.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
+                </div>
+                <div className="d-flex justify-content-between align-items-center mb-2">
+                  <span className="fw-semibold" style={{cursor: 'pointer'}} onClick={() => setCollapseFees(v => !v)}>
+                    Fulfillment
+                    <span style={{marginLeft: 8, fontWeight: 'bold', fontSize: '1.1em'}}>
+                      {collapseFees ? '-' : '+'}
                     </span>
-                    <span className="fw-bold">${feesTotal.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
-                  </div>
-                  {collapseFees && (
-                    <div className="ps-3">
-                      <div className="d-flex justify-content-between align-items-center mb-2">
-                        <span className="fw-semibold">Warranty</span>
-                        <span className="fw-bold">${protectionTotal.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
-                      </div>
-                      {furnitureDeliveryFee > 0 && (
-                        <div className="d-flex justify-content-between align-items-center mb-2">
-                          <span className="fw-semibold">Furniture Delivery</span>
-                          <span className="fw-bold">${furnitureDeliveryFee.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
-                        </div>
-                      )}
-                      {clearanceDeliveryFee > 0 && (
-                        <div className="d-flex justify-content-between align-items-center mb-2">
-                          <span className="fw-semibold">Clearance Delivery</span>
-                          <span className="fw-bold">${clearanceDeliveryFee.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
-                        </div>
-                      )}
-                      {mattressDeliveryFee > 0 && (
-                        <div className="d-flex justify-content-between align-items-center mb-2">
-                          <span className="fw-semibold">Mattress Delivery</span>
-                          <span className="fw-bold">${mattressDeliveryFee.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
-                        </div>
-                      )}
-                      {powerBaseDeliveryFee > 0 && (
-                        <div className="d-flex justify-content-between align-items-center mb-2">
-                          <span className="fw-semibold">Power Base Delivery</span>
-                          <span className="fw-bold">${powerBaseDeliveryFee.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
-                        </div>
-                      )}
-                      <div className="d-flex justify-content-between align-items-center mb-2">
-                        <span className="fw-semibold">Tax ({(parseFloat(taxRate) || 0).toFixed(1)}%)</span>
-                        <span className="fw-bold">${summaryTax.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
-                      </div>
+                  </span>
+                  <span className="fw-bold">${feesTotal.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
+                </div>
+                {collapseFees && (
+                  <div className="ps-3">
+                    <div className="d-flex justify-content-between align-items-center mb-2">
+                      <span className="fw-semibold">Warranty</span>
+                      <span className="fw-bold">${protectionTotal.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
                     </div>
-                  )}
-                  <div className="d-flex justify-content-between align-items-center mb-2 mt-3" style={{fontSize: '1.1rem'}}>
-                    <span className="fw-bold">Grand Total</span>
-                    <span className="fw-bold">${summaryGrandTotal.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
+                    {furnitureDeliveryFee > 0 && (
+                      <div className="d-flex justify-content-between align-items-center mb-2">
+                        <span className="fw-semibold">Furniture Delivery</span>
+                        <span className="fw-bold">${furnitureDeliveryFee.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
+                      </div>
+                    )}
+                    {clearanceDeliveryFee > 0 && (
+                      <div className="d-flex justify-content-between align-items-center mb-2">
+                        <span className="fw-semibold">Clearance Delivery</span>
+                        <span className="fw-bold">${clearanceDeliveryFee.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
+                      </div>
+                    )}
+                    {mattressDeliveryFee > 0 && (
+                      <div className="d-flex justify-content-between align-items-center mb-2">
+                        <span className="fw-semibold">Mattress Delivery</span>
+                        <span className="fw-bold">${mattressDeliveryFee.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
+                      </div>
+                    )}
+                    {powerBaseDeliveryFee > 0 && (
+                      <div className="d-flex justify-content-between align-items-center mb-2">
+                        <span className="fw-semibold">Power Base Delivery</span>
+                        <span className="fw-bold">${powerBaseDeliveryFee.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
+                      </div>
+                    )}
+                    <div className="d-flex justify-content-between align-items-center mb-2">
+                      <span className="fw-semibold">Tax ({(parseFloat(taxRate) || 0).toFixed(1)}%)</span>
+                      <span className="fw-bold">${summaryTax.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
+                    </div>
                   </div>
-                  <div className="d-flex justify-content-between align-items-center mb-2">
-                    <span className="fw-semibold">Down Payment</span>
-                    <span className="fw-bold">${summaryDownPayment.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
-                  </div>
-                  <div className="d-flex justify-content-between align-items-center" style={{fontSize: '1.1rem'}}>
-                    <span className="fw-bold">Total Financed</span>
-                    <span className="fw-bold">${summaryFinanced.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
-                  </div>
+                )}
+                <div className="d-flex justify-content-between align-items-center mb-2 mt-3" style={{fontSize: '1.1rem'}}>
+                  <span className="fw-bold">Grand Total</span>
+                  <span className="fw-bold">${summaryGrandTotal.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
+                </div>
+                <div className="d-flex justify-content-between align-items-center mb-2">
+                  <span className="fw-semibold">Down Payment</span>
+                  <span className="fw-bold">${summaryDownPayment.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
+                </div>
+                <div className="d-flex justify-content-between align-items-center" style={{fontSize: '1.1rem'}}>
+                  <span className="fw-bold">Total Financed</span>
+                  <span className="fw-bold">${summaryFinanced.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
                 </div>
               </div>
-              <div className="terms-section p-2 mb-3">
+            </div>
+          </div>
+          <div className="d-flex flex-column align-items-center print-summary-center" style={{ minHeight: 500, flex: '0 0 70%', maxWidth: '70%' }}>
+            <div className="w-100" style={{overflowY: 'auto', maxHeight: 520}}>
+              <div className="terms-section p-1 mb-3">
                 <table className="table table-sm table-bordered mb-0 text-center align-middle">
                   <thead>
                     <tr>
@@ -679,7 +691,7 @@ const LineItemManager = ({ onCalculate, onAddLine, lines, delivery, setDelivery,
                       key={term}
                       type="button"
                       className={`btn btn-sm ${selectedTerms.includes(term) ? 'btn-primary' : 'btn-outline-secondary'}`}
-                      style={{minWidth: 48, fontWeight: 600}}
+                      style={{minWidth: 64, height: 48, fontSize: '1.3em', fontWeight: 600, padding: '0 1.5rem'}}
                       onClick={() => toggleTerm(term)}
                     >
                       {term}
