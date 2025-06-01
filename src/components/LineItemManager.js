@@ -337,367 +337,360 @@ const LineItemManager = ({ onCalculate, onAddLine, lines, delivery, setDelivery,
   `;
 
   return (
-    <div className="container mt-5">
-      <div className="card shadow-lg mx-auto" style={{ maxWidth: '900px' }}>
-        <div className="card-body" ref={printRef}>
-          {/* Top bar with options/help/print buttons */}
-          <div className="d-flex justify-content-between align-items-center mb-3" style={{width: '100%'}}>
-            <div className="d-flex align-items-center gap-2">
-              <button
-                className="btn rounded-circle d-flex align-items-center justify-content-center"
-                style={{ width: 38, height: 38, fontSize: 18, padding: 0, background: '#ffc107', color: '#212529', border: 'none' }}
-                type="button"
-                title="More Options"
-                onClick={openOptionsModal}
-              >
-                <FaBars />
-              </button>
-              <span style={{ fontSize: 20, fontWeight: 600, verticalAlign: 'middle', lineHeight: '38px', marginLeft: 8 }}>
-                Finance Calculator
-              </span>
-            </div>
-            <div className="d-flex gap-2">
-              <button
-                className="btn btn-outline-info rounded-circle d-flex align-items-center justify-content-center"
-                style={{ width: 38, height: 38, fontSize: 18, padding: 0 }}
-                onClick={openHelperModal}
-                type="button"
-                title="How Calculations Work"
-              >
-                <FaQuestion />
-              </button>
-              <button
-                className="btn btn-outline-primary rounded-circle d-flex align-items-center justify-content-center"
-                style={{ width: 38, height: 38, fontSize: 18, padding: 0 }}
-                onClick={handlePrint}
-                type="button"
-                title="Print Summary"
-              >
-                <FaPrint />
-              </button>
-            </div>
-            {showOptionsModal && (
-              <div className="modal fade show" style={{display: 'block'}} tabIndex="-1" role="dialog">
-                <div className="modal-dialog" role="document">
-                  <div className="modal-content">
-                    <div className="modal-header">
-                      <h5 className="modal-title">Additional Options</h5>
-                      <button type="button" className="btn-close" aria-label="Close" onClick={closeOptionsModal}></button>
-                    </div>
-                    <div className="modal-body">
-                      <div className="d-flex gap-2 mb-2">
-                        <div className="flex-fill">
-                          <label className="form-label">Delivery</label>
-                          <select
-                            className="form-select"
-                            value={pendingDelivery}
-                            onChange={e => setPendingDelivery(e.target.value)}
-                          >
-                            {DELIVERY_OPTIONS.map(opt => (
-                              <option key={opt.value} value={opt.value}>{opt.label}</option>
-                            ))}
-                          </select>
-                        </div>
-                        <div style={{minWidth: 110}}>
-                          <label className="form-label">Tax Rate (%)</label>
-                          <input
-                            type="number"
-                            className="form-control"
-                            placeholder="Tax rate"
-                            min="0"
-                            step="0.1"
-                            value={pendingTaxRate}
-                            onChange={e => setPendingTaxRate(e.target.value)}
-                          />
-                        </div>
+    <div className="p-3" style={{ width: '100vw', height: '100vh', padding: 0, margin: 0, background: '#f7f8fa' }}>
+      <div style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column' }}>
+        <div className="d-flex justify-content-between align-items-center mb-3" style={{width: '100%'}}>
+          <div className="d-flex align-items-center gap-2">
+            <button
+              className="btn rounded-circle d-flex align-items-center justify-content-center"
+              style={{ width: 38, height: 38, fontSize: 18, padding: 0, background: '#ffc107', color: '#212529', border: 'none' }}
+              type="button"
+              title="More Options"
+              onClick={openOptionsModal}
+            >
+              <FaBars />
+            </button>
+            <span style={{ fontSize: 20, fontWeight: 600, verticalAlign: 'middle', lineHeight: '38px', marginLeft: 8 }}>
+              Finance Calculator
+            </span>
+          </div>
+          <div className="d-flex gap-2">
+            <button
+              className="btn btn-outline-info rounded-circle d-flex align-items-center justify-content-center"
+              style={{ width: 38, height: 38, fontSize: 18, padding: 0 }}
+              onClick={openHelperModal}
+              type="button"
+              title="How Calculations Work"
+            >
+              <FaQuestion />
+            </button>
+            <button
+              className="btn btn-outline-primary rounded-circle d-flex align-items-center justify-content-center"
+              style={{ width: 38, height: 38, fontSize: 18, padding: 0 }}
+              onClick={handlePrint}
+              type="button"
+              title="Print Summary"
+            >
+              <FaPrint />
+            </button>
+          </div>
+          {showOptionsModal && (
+            <div className="modal fade show" style={{display: 'block'}} tabIndex="-1" role="dialog">
+              <div className="modal-dialog" role="document">
+                <div className="modal-content">
+                  <div className="modal-header">
+                    <h5 className="modal-title">Additional Options</h5>
+                    <button type="button" className="btn-close" aria-label="Close" onClick={closeOptionsModal}></button>
+                  </div>
+                  <div className="modal-body">
+                    <div className="d-flex gap-2 mb-2">
+                      <div className="flex-fill">
+                        <label className="form-label">Delivery</label>
+                        <select
+                          className="form-select"
+                          value={pendingDelivery}
+                          onChange={e => setPendingDelivery(e.target.value)}
+                        >
+                          {DELIVERY_OPTIONS.map(opt => (
+                            <option key={opt.value} value={opt.value}>{opt.label}</option>
+                          ))}
+                        </select>
                       </div>
-                      <div className="d-flex gap-2 mb-2">
-                        <div className="flex-fill">
-                          <label className="form-label">Down Payment</label>
-                          <input
-                            type="number"
-                            className="form-control"
-                            placeholder="Down payment ($)"
-                            min="0"
-                            value={pendingDownPayment}
-                            onChange={e => setPendingDownPayment(e.target.value)}
-                          />
-                        </div>
-                        <div className="flex-fill">
-                          <label className="form-label">Cash Discount</label>
-                          <input
-                            type="number"
-                            className="form-control"
-                            placeholder="Cash discount ($)"
-                            min="0"
-                            value={pendingCashDiscount}
-                            onChange={e => setPendingCashDiscount(e.target.value)}
-                          />
-                        </div>
-                      </div>
-                      <div className="mb-2">
-                        <label className="form-label d-flex align-items-center" htmlFor="protectionOverrideInput">
-                          Protection Override
-                          <span
-                            className="ms-2"
-                            id="protectionOverrideTooltip"
-                            style={{ cursor: 'pointer', color: '#888', display: 'inline-flex', alignItems: 'center' }}
-                            data-bs-toggle="tooltip"
-                            data-bs-placement="right"
-                            title="If set, this value will replace the calculated cost of protection for the entire order."
-                          >
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-info-circle" viewBox="0 0 16 16">
-                              <path d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14zm0 1A8 8 0 1 1 8 0a8 8 0 0 1 0 16z"/>
-                              <path d="M8.93 6.588l-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 .877-.252 1.02-.797l.088-.416c.073-.34.211-.466.465-.466.288 0 .345.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 .877-.252 1.02-.797l.088-.416c.073-.34.211-.466.465-.466.288 0 .345.176.288.469z"/>
-                            </svg>
-                          </span>
-                        </label>
+                      <div style={{minWidth: 110}}>
+                        <label className="form-label">Tax Rate (%)</label>
                         <input
-                          id="protectionOverrideInput"
                           type="number"
                           className="form-control"
-                          placeholder="Override protection ($)"
+                          placeholder="Tax rate"
                           min="0"
-                          value={pendingProtectionOverride}
-                          onChange={e => setPendingProtectionOverride(e.target.value)}
+                          step="0.1"
+                          value={pendingTaxRate}
+                          onChange={e => setPendingTaxRate(e.target.value)}
                         />
                       </div>
                     </div>
-                    <div className="modal-footer">
-                      <button type="button" className="btn btn-secondary" onClick={closeOptionsModal}>Cancel</button>
-                      <button type="button" className="btn btn-primary" onClick={saveOptionsModal}>Save</button>
+                    <div className="d-flex gap-2 mb-2">
+                      <div className="flex-fill">
+                        <label className="form-label">Down Payment</label>
+                        <input
+                          type="number"
+                          className="form-control"
+                          placeholder="Down payment ($)"
+                          min="0"
+                          value={pendingDownPayment}
+                          onChange={e => setPendingDownPayment(e.target.value)}
+                        />
+                      </div>
+                      <div className="flex-fill">
+                        <label className="form-label">Cash Discount</label>
+                        <input
+                          type="number"
+                          className="form-control"
+                          placeholder="Cash discount ($)"
+                          min="0"
+                          value={pendingCashDiscount}
+                          onChange={e => setPendingCashDiscount(e.target.value)}
+                        />
+                      </div>
                     </div>
+                    <div className="mb-2">
+                      <label className="form-label d-flex align-items-center" htmlFor="protectionOverrideInput">
+                        Protection Override
+                        <span
+                          className="ms-2"
+                          id="protectionOverrideTooltip"
+                          style={{ cursor: 'pointer', color: '#888', display: 'inline-flex', alignItems: 'center' }}
+                          data-bs-toggle="tooltip"
+                          data-bs-placement="right"
+                          title="If set, this value will replace the calculated cost of protection for the entire order."
+                        >
+                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-info-circle" viewBox="0 0 16 16">
+                            <path d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14zm0 1A8 8 0 1 1 8 0a8 8 0 0 1 0 16z"/>
+                            <path d="M8.93 6.588l-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 .877-.252 1.02-.797l.088-.416c.073-.34.211-.466.465-.466.288 0 .345.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 .877-.252 1.02-.797l.088-.416c.073-.34.211-.466.465-.466.288 0 .345.176.288.469z"/>
+                          </svg>
+                        </span>
+                      </label>
+                      <input
+                        id="protectionOverrideInput"
+                        type="number"
+                        className="form-control"
+                        placeholder="Override protection ($)"
+                        min="0"
+                        value={pendingProtectionOverride}
+                        onChange={e => setPendingProtectionOverride(e.target.value)}
+                      />
+                    </div>
+                  </div>
+                  <div className="modal-footer">
+                    <button type="button" className="btn btn-secondary" onClick={closeOptionsModal}>Cancel</button>
+                    <button type="button" className="btn btn-primary" onClick={saveOptionsModal}>Save</button>
                   </div>
                 </div>
-              </div>
-            )}
-          </div>
-          <div className="row" style={{ display: 'flex' }}>
-            {/* Left column: Add Line Item Form */}
-            <div className="border-end" style={{ flex: '0 0 40%', maxWidth: '40%' }}>
-              <div className="mb-3 p-3" style={{ background: 'whitesmoke', borderRadius: '10px' }}>
-                <form className="d-flex align-items-end gap-2 mb-2" onSubmit={e => { e.preventDefault(); handleAddLine(); }}>
-                  <div className="flex-grow-1">
-                    <label className="form-label">Type</label>
-                    <select 
-                      value={currentItem.type}
-                      onChange={handleTypeChange}
-                      className="form-select"
-                    >
-                      {TYPE_OPTIONS.map(opt => (
-                        <option key={opt.value} value={opt.value}>{opt.label}</option>
-                      ))}
-                    </select>
-                  </div>
-                  <div style={{ width: '110px' }}>
-                    <label className="form-label">Price</label>
-                    <input
-                      type="number"
-                      value={currentItem.price}
-                      onChange={handlePriceChange}
-                      placeholder="Price"
-                      className="form-control"
-                      min="0"
-                      step="0.01"
-                      maxLength={5}
-                      style={{ width: '100%' }}
-                    />
-                  </div>
-                  <div style={{ width: '38px' }}>
-                    <label className="form-label visually-hidden">Add</label>
-                    <button type="submit" className="btn btn-primary d-flex align-items-center justify-content-center p-0" style={{ height: '38px', width: '38px', borderRadius: '0.375rem' }} title="Add Line">
-                      <FaPlus size={16} />
-                    </button>
-                  </div>
-                </form>
-              </div>
-              {/* Line Items List (moved from right to left column) */}
-              <div className="line-items-section mb-2 p-2">
-                {lineItems.map((line, index) => (
-                  <React.Fragment key={index}>
-                    <div className="d-flex align-items-center justify-content-between py-2">
-                      {(line.type === 'furniture' || line.type === 'power base' || line.type === 'clearance' || line.type === 'mattress') ? (
-                        <button
-                          type="button"
-                          className="btn btn-sm me-2"
-                          style={{
-                            backgroundColor: line.protection ? '#0d6efd' : '#e9ecef',
-                            color: line.protection ? 'white' : '#6c757d',
-                            border: 'none',
-                            borderRadius: '50%',
-                            width: '32px',
-                            height: '32px',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            boxShadow: line.protection ? '0 0 4px #0d6efd55' : 'none',
-                            transition: 'background 0.2s, color 0.2s',
-                          }}
-                          title={line.protection ? 'Warranty On' : 'Warranty Off'}
-                          onClick={e => {
-                            if (line.type === 'mattress' && !line.protection) {
-                              setShowMattressProtectionToast(true);
-                              setTimeout(() => setShowMattressProtectionToast(false), 2500);
-                              return;
-                            }
-                            const updated = [...lineItems];
-                            updated[index].protection = !updated[index].protection;
-                            setLineItems(updated);
-                            if (typeof setLines === 'function') {
-                              setLines(updated);
-                            }
-                          }}
-                        >
-                          <FaShieldAlt size={18} />
-                        </button>
-                      ) : (
-                        <span className="me-2" style={{ width: '32px', height: '32px', display: 'inline-block' }}></span>
-                      )}
-                      <span className="text-capitalize fw-medium" style={{width: '40%'}}>{line.type}</span>
-                      <span className="fw-bold text-end" style={{marginRight: 8}}>${line.price}</span>
-                      <button
-                        type="button"
-                        className="btn btn-danger btn-sm rounded-circle d-flex align-items-center justify-content-center"
-                        title="Remove Line"
-                        style={{ minWidth: '28px', minHeight: '28px', width: '28px', height: '28px', fontSize: '1.1rem', padding: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-                        onClick={() => handleRemoveLine(index)}
-                      >
-                        <span style={{lineHeight: 1, fontWeight: 'bold'}}>&times;</span>
-                      </button>
-                    </div>
-                    {lineItems.length > 1 && index < lineItems.length - 1 && (
-                      <hr style={{margin: '0 0 0.5rem 0', borderColor: '#bfc5ce', borderWidth: 2}} />
-                    )}
-                  </React.Fragment>
-                ))}
               </div>
             </div>
-            {/* Right column: Line Items List or Summary/Terms */}
-            <style>{printStyles}</style>
-            <div className="d-flex flex-column align-items-center print-summary-center" style={{ minHeight: 500, flex: '0 0 60%', maxWidth: '60%' }} ref={printRef}>
-              <div className="w-100" style={{overflowY: 'auto', maxHeight: 520}}>
-                <div className="summary-section bg-light shadow-sm mb-3 px-3 pt-2 pb-1">
-                  <div className="mb-3">
-                    <div className="d-flex justify-content-between align-items-center my-2">
-                      <span className="fw-semibold">Total Retail Price</span>
-                      <span className="fw-bold">${totalPrice.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
-                    </div>
-                    <div className="d-flex justify-content-between align-items-center mb-2">
-                      <span className="fw-semibold" style={{cursor: 'pointer'}} onClick={() => setCollapseFees(v => !v)}>
-                        Fulfillment
-                        <span style={{marginLeft: 8, fontWeight: 'bold', fontSize: '1.1em'}}>
-                          {collapseFees ? '-' : '+'}
-                        </span>
-                      </span>
-                      <span className="fw-bold">${feesTotal.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
-                    </div>
-                    {collapseFees && (
-                      <div className="ps-3">
-                        <div className="d-flex justify-content-between align-items-center mb-2">
-                          <span className="fw-semibold">Warranty</span>
-                          <span className="fw-bold">${protectionTotal.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
-                        </div>
-                        {furnitureDeliveryFee > 0 && (
-                          <div className="d-flex justify-content-between align-items-center mb-2">
-                            <span className="fw-semibold">Furniture Delivery</span>
-                            <span className="fw-bold">${furnitureDeliveryFee.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
-                          </div>
-                        )}
-                        {clearanceDeliveryFee > 0 && (
-                          <div className="d-flex justify-content-between align-items-center mb-2">
-                            <span className="fw-semibold">Clearance Delivery</span>
-                            <span className="fw-bold">${clearanceDeliveryFee.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
-                          </div>
-                        )}
-                        {mattressDeliveryFee > 0 && (
-                          <div className="d-flex justify-content-between align-items-center mb-2">
-                            <span className="fw-semibold">Mattress Delivery</span>
-                            <span className="fw-bold">${mattressDeliveryFee.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
-                          </div>
-                        )}
-                        {powerBaseDeliveryFee > 0 && (
-                          <div className="d-flex justify-content-between align-items-center mb-2">
-                            <span className="fw-semibold">Power Base Delivery</span>
-                            <span className="fw-bold">${powerBaseDeliveryFee.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
-                          </div>
-                        )}
-                        <div className="d-flex justify-content-between align-items-center mb-2">
-                          <span className="fw-semibold">Tax ({(parseFloat(taxRate) || 0).toFixed(1)}%)</span>
-                          <span className="fw-bold">${summaryTax.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
-                        </div>
-                      </div>
+          )}
+        </div>
+        <div className="row" style={{ display: 'flex' }}>
+          <div className="border-end" style={{ flex: '0 0 40%', maxWidth: '40%' }}>
+            <div className="mb-3 p-3" style={{ background: 'whitesmoke', borderRadius: '10px' }}>
+              <form className="d-flex align-items-end gap-2 mb-2" onSubmit={e => { e.preventDefault(); handleAddLine(); }}>
+                <div className="flex-grow-1">
+                  <label className="form-label">Type</label>
+                  <select 
+                    value={currentItem.type}
+                    onChange={handleTypeChange}
+                    className="form-select"
+                  >
+                    {TYPE_OPTIONS.map(opt => (
+                      <option key={opt.value} value={opt.value}>{opt.label}</option>
+                    ))}
+                  </select>
+                </div>
+                <div style={{ width: '110px' }}>
+                  <label className="form-label">Price</label>
+                  <input
+                    type="number"
+                    value={currentItem.price}
+                    onChange={handlePriceChange}
+                    placeholder="Price"
+                    className="form-control"
+                    min="0"
+                    step="0.01"
+                    maxLength={5}
+                    style={{ width: '100%' }}
+                  />
+                </div>
+                <div style={{ width: '38px' }}>
+                  <label className="form-label visually-hidden">Add</label>
+                  <button type="submit" className="btn btn-primary d-flex align-items-center justify-content-center p-0" style={{ height: '38px', width: '38px', borderRadius: '0.375rem' }} title="Add Line">
+                    <FaPlus size={16} />
+                  </button>
+                </div>
+              </form>
+            </div>
+            <div className="line-items-section mb-2 p-2">
+              {lineItems.map((line, index) => (
+                <React.Fragment key={index}>
+                  <div className="d-flex align-items-center justify-content-between py-2">
+                    {(line.type === 'furniture' || line.type === 'power base' || line.type === 'clearance' || line.type === 'mattress') ? (
+                      <button
+                        type="button"
+                        className="btn btn-sm me-2"
+                        style={{
+                          backgroundColor: line.protection ? '#0d6efd' : '#e9ecef',
+                          color: line.protection ? 'white' : '#6c757d',
+                          border: 'none',
+                          borderRadius: '50%',
+                          width: '32px',
+                          height: '32px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          boxShadow: line.protection ? '0 0 4px #0d6efd55' : 'none',
+                          transition: 'background 0.2s, color 0.2s',
+                        }}
+                        title={line.protection ? 'Warranty On' : 'Warranty Off'}
+                        onClick={e => {
+                          if (line.type === 'mattress' && !line.protection) {
+                            setShowMattressProtectionToast(true);
+                            setTimeout(() => setShowMattressProtectionToast(false), 2500);
+                            return;
+                          }
+                          const updated = [...lineItems];
+                          updated[index].protection = !updated[index].protection;
+                          setLineItems(updated);
+                          if (typeof setLines === 'function') {
+                            setLines(updated);
+                          }
+                        }}
+                      >
+                        <FaShieldAlt size={18} />
+                      </button>
+                    ) : (
+                      <span className="me-2" style={{ width: '32px', height: '32px', display: 'inline-block' }}></span>
                     )}
-                    <div className="d-flex justify-content-between align-items-center mb-2 mt-3" style={{fontSize: '1.1rem'}}>
-                      <span className="fw-bold">Grand Total</span>
-                      <span className="fw-bold">${summaryGrandTotal.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
+                    <span className="text-capitalize fw-medium" style={{width: '40%'}}>{line.type}</span>
+                    <span className="fw-bold text-end" style={{marginRight: 8}}>${line.price}</span>
+                    <button
+                      type="button"
+                      className="btn btn-danger btn-sm rounded-circle d-flex align-items-center justify-content-center"
+                      title="Remove Line"
+                      style={{ minWidth: '28px', minHeight: '28px', width: '28px', height: '28px', fontSize: '1.1rem', padding: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                      onClick={() => handleRemoveLine(index)}
+                    >
+                      <span style={{lineHeight: 1, fontWeight: 'bold'}}>&times;</span>
+                    </button>
+                  </div>
+                  {lineItems.length > 1 && index < lineItems.length - 1 && (
+                    <hr style={{margin: '0 0 0.5rem 0', borderColor: '#bfc5ce', borderWidth: 2}} />
+                  )}
+                </React.Fragment>
+              ))}
+            </div>
+          </div>
+          <style>{printStyles}</style>
+          <div className="d-flex flex-column align-items-center print-summary-center" style={{ minHeight: 500, flex: '0 0 60%', maxWidth: '60%' }} ref={printRef}>
+            <div className="w-100" style={{overflowY: 'auto', maxHeight: 520}}>
+              <div className="summary-section bg-light shadow-sm mb-3 px-3 pt-2 pb-1">
+                <div className="mb-3">
+                  <div className="d-flex justify-content-between align-items-center my-2">
+                    <span className="fw-semibold">Total Retail Price</span>
+                    <span className="fw-bold">${totalPrice.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
+                  </div>
+                  <div className="d-flex justify-content-between align-items-center mb-2">
+                    <span className="fw-semibold" style={{cursor: 'pointer'}} onClick={() => setCollapseFees(v => !v)}>
+                      Fulfillment
+                      <span style={{marginLeft: 8, fontWeight: 'bold', fontSize: '1.1em'}}>
+                        {collapseFees ? '-' : '+'}
+                      </span>
+                    </span>
+                    <span className="fw-bold">${feesTotal.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
+                  </div>
+                  {collapseFees && (
+                    <div className="ps-3">
+                      <div className="d-flex justify-content-between align-items-center mb-2">
+                        <span className="fw-semibold">Warranty</span>
+                        <span className="fw-bold">${protectionTotal.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
+                      </div>
+                      {furnitureDeliveryFee > 0 && (
+                        <div className="d-flex justify-content-between align-items-center mb-2">
+                          <span className="fw-semibold">Furniture Delivery</span>
+                          <span className="fw-bold">${furnitureDeliveryFee.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
+                        </div>
+                      )}
+                      {clearanceDeliveryFee > 0 && (
+                        <div className="d-flex justify-content-between align-items-center mb-2">
+                          <span className="fw-semibold">Clearance Delivery</span>
+                          <span className="fw-bold">${clearanceDeliveryFee.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
+                        </div>
+                      )}
+                      {mattressDeliveryFee > 0 && (
+                        <div className="d-flex justify-content-between align-items-center mb-2">
+                          <span className="fw-semibold">Mattress Delivery</span>
+                          <span className="fw-bold">${mattressDeliveryFee.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
+                        </div>
+                      )}
+                      {powerBaseDeliveryFee > 0 && (
+                        <div className="d-flex justify-content-between align-items-center mb-2">
+                          <span className="fw-semibold">Power Base Delivery</span>
+                          <span className="fw-bold">${powerBaseDeliveryFee.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
+                        </div>
+                      )}
+                      <div className="d-flex justify-content-between align-items-center mb-2">
+                        <span className="fw-semibold">Tax ({(parseFloat(taxRate) || 0).toFixed(1)}%)</span>
+                        <span className="fw-bold">${summaryTax.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
+                      </div>
                     </div>
-                    <div className="d-flex justify-content-between align-items-center mb-2">
-                      <span className="fw-semibold">Down Payment</span>
-                      <span className="fw-bold">${summaryDownPayment.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
-                    </div>
-                    <div className="d-flex justify-content-between align-items-center" style={{fontSize: '1.1rem'}}>
-                      <span className="fw-bold">Total Financed</span>
-                      <span className="fw-bold">${summaryFinanced.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
-                    </div>
+                  )}
+                  <div className="d-flex justify-content-between align-items-center mb-2 mt-3" style={{fontSize: '1.1rem'}}>
+                    <span className="fw-bold">Grand Total</span>
+                    <span className="fw-bold">${summaryGrandTotal.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
+                  </div>
+                  <div className="d-flex justify-content-between align-items-center mb-2">
+                    <span className="fw-semibold">Down Payment</span>
+                    <span className="fw-bold">${summaryDownPayment.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
+                  </div>
+                  <div className="d-flex justify-content-between align-items-center" style={{fontSize: '1.1rem'}}>
+                    <span className="fw-bold">Total Financed</span>
+                    <span className="fw-bold">${summaryFinanced.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
                   </div>
                 </div>
-                <div className="terms-section p-2 mb-3">
-                  <table className="table table-sm table-bordered mb-0 text-center align-middle">
-                    <thead>
-                      <tr>
-                        <th className="bg-light text-center align-middle" style={{minWidth: '120px', fontWeight: 600}}></th>
-                        {selectedTerms.map(term => (
-                          <th key={term} className="text-center align-middle bg-light">{term} mo</th>
-                        ))}
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <td className="text-start fw-semibold" style={{background: '#f8f9fa'}}>Discount %</td>
-                        {selectedTerms.map(term => (
-                          <td key={term} className="text-center align-middle">{getDiscountPercent(term)}</td>
-                        ))}
-                      </tr>
-                      <tr>
-                        <td className="text-start fw-semibold" style={{background: '#f8f9fa'}}>Discount $</td>
-                        {selectedTerms.map(term => (
-                          <td key={term} className="text-center align-middle">{getDiscountDollar(term)}</td>
-                        ))}
-                      </tr>
-                      <tr>
-                        <td className="text-start fw-semibold" style={{background: '#f8f9fa'}}>Total</td>
-                        {selectedTerms.map(term => (
-                          <td key={term} className="text-center align-middle fw-semibold text-primary">${getFinancedForTerm(term).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
-                        ))}
-                      </tr>
-                      <tr className="terms-bottom-row">
-                        <td className="text-start fw-semibold" style={{background: '#e6f9ec'}}>Payment</td>
-                        {selectedTerms.map(term => (
-                          <td key={term} className="fw-bold text-center align-middle">${getMonthlyWithDiscount(term).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
-                        ))}
-                      </tr>
-                    </tbody>
-                  </table>
-                  <div className="d-flex justify-content-end gap-2 mt-2">
-                    {PAYMENT_TERMS.map(term => (
-                      <button
-                        key={term}
-                        type="button"
-                        className={`btn btn-sm ${selectedTerms.includes(term) ? 'btn-primary' : 'btn-outline-secondary'}`}
-                        style={{minWidth: 48, fontWeight: 600}}
-                        onClick={() => toggleTerm(term)}
-                      >
-                        {term}
-                      </button>
-                    ))}
-                  </div>
+              </div>
+              <div className="terms-section p-2 mb-3">
+                <table className="table table-sm table-bordered mb-0 text-center align-middle">
+                  <thead>
+                    <tr>
+                      <th className="bg-light text-center align-middle" style={{minWidth: '120px', fontWeight: 600}}></th>
+                      {selectedTerms.map(term => (
+                        <th key={term} className="text-center align-middle bg-light">{term} mo</th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td className="text-start fw-semibold" style={{background: '#f8f9fa'}}>Discount %</td>
+                      {selectedTerms.map(term => (
+                        <td key={term} className="text-center align-middle">{getDiscountPercent(term)}</td>
+                      ))}
+                    </tr>
+                    <tr>
+                      <td className="text-start fw-semibold" style={{background: '#f8f9fa'}}>Discount $</td>
+                      {selectedTerms.map(term => (
+                        <td key={term} className="text-center align-middle">{getDiscountDollar(term)}</td>
+                      ))}
+                    </tr>
+                    <tr>
+                      <td className="text-start fw-semibold" style={{background: '#f8f9fa'}}>Total</td>
+                      {selectedTerms.map(term => (
+                        <td key={term} className="text-center align-middle fw-semibold text-primary">${getFinancedForTerm(term).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                      ))}
+                    </tr>
+                    <tr className="terms-bottom-row">
+                      <td className="text-start fw-semibold" style={{background: '#e6f9ec'}}>Payment</td>
+                      {selectedTerms.map(term => (
+                        <td key={term} className="fw-bold text-center align-middle">${getMonthlyWithDiscount(term).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                      ))}
+                    </tr>
+                  </tbody>
+                </table>
+                <div className="d-flex justify-content-end gap-2 mt-2">
+                  {PAYMENT_TERMS.map(term => (
+                    <button
+                      key={term}
+                      type="button"
+                      className={`btn btn-sm ${selectedTerms.includes(term) ? 'btn-primary' : 'btn-outline-secondary'}`}
+                      style={{minWidth: 48, fontWeight: 600}}
+                      onClick={() => toggleTerm(term)}
+                    >
+                      {term}
+                    </button>
+                  ))}
                 </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-      {/* Bootstrap Toast for clearance financing restriction */}
       <div
         className="toast-container position-fixed bottom-0 end-0 p-3"
         style={{ zIndex: 9999 }}
@@ -741,7 +734,6 @@ const LineItemManager = ({ onCalculate, onAddLine, lines, delivery, setDelivery,
           </div>
         </div>
       </div>
-      {/* Helper Modal for Calculation Tables */}
       <Modal show={showHelperModal} onHide={closeHelperModal} size="lg" centered>
         <Modal.Header closeButton>
           <Modal.Title>How Delivery & Protection Are Calculated</Modal.Title>
