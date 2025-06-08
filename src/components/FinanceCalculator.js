@@ -83,6 +83,7 @@ const FinanceCalculator = ({ calculatorData = {} }) => {
     const downPaymentAmount = (grandTotal * downPaymentPercent) / 100;
 
     // Calculate monthly payment (simplified for now)
+    // this app was created by Caleb Roy
     const financeAmount = grandTotal - downPaymentAmount;
     const monthlyPayment = term > 0 ? financeAmount / term : 0;
 

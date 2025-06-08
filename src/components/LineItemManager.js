@@ -44,6 +44,7 @@ const LineItemManager = ({ onCalculate, onAddLine, lines, delivery, setDelivery,
   const [protectionOverride, setProtectionOverride] = useState('');
   const [showClearanceToast, setShowClearanceToast] = useState(false);
   const [showMattressProtectionToast, setShowMattressProtectionToast] = useState(false);
+  const [showPrintWarningToast, setShowPrintWarningToast] = useState(false);
   const clearanceExists = lineItems.some(item => item.type === 'clearance');
   const [showHelperModal, setShowHelperModal] = useState(false);
   const [helperTable, setHelperTable] = useState('protection');
@@ -349,6 +350,15 @@ const LineItemManager = ({ onCalculate, onAddLine, lines, delivery, setDelivery,
   const openHelperModal = () => setShowHelperModal(true);
   const closeHelperModal = () => setShowHelperModal(false);
 
+  const handlePrintClick = () => {
+    if (selectedTerms.length > 4) {
+      setShowPrintWarningToast(true);
+      setTimeout(() => setShowPrintWarningToast(false), 2500);
+      return;
+    }
+    handlePrint();
+  };
+
   return (
     <div className="p-4" style={{ width: '100vw', height: '100vh', padding: 0, margin: 0, background: '#fff', fontSize: '1.1rem' }} ref={printRef}>
       <div style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column' }}>
@@ -380,7 +390,7 @@ const LineItemManager = ({ onCalculate, onAddLine, lines, delivery, setDelivery,
             <button
               className="btn btn-outline-primary rounded-circle d-flex align-items-center justify-content-center"
               style={{ width: 38, height: 38, fontSize: 18, padding: 0 }}
-              onClick={handlePrint}
+              onClick={handlePrintClick}
               type="button"
               title="Print Summary"
             >
@@ -742,6 +752,25 @@ const LineItemManager = ({ onCalculate, onAddLine, lines, delivery, setDelivery,
               data-bs-dismiss="toast"
               aria-label="Close"
               onClick={() => setShowMattressProtectionToast(false)}
+            ></button>
+          </div>
+        </div>
+        <div
+          className={`toast align-items-center text-bg-warning border-0 ${showPrintWarningToast ? 'show' : ''}`}
+          role="alert"
+          aria-live="assertive"
+          aria-atomic="true"
+        >
+          <div className="d-flex">
+            <div className="toast-body">
+              Please select 4 or fewer payment terms for printing.
+            </div>
+            <button
+              type="button"
+              className="btn-close btn-close-white me-2 m-auto"
+              data-bs-dismiss="toast"
+              aria-label="Close"
+              onClick={() => setShowPrintWarningToast(false)}
             ></button>
           </div>
         </div>
